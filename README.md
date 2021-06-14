@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Repositório para o projeto de whatsAppClone do curso de React da B7web
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
