@@ -2,14 +2,17 @@ import React, {useState, useEffect} from 'react';
 
 import './ChatListItem.css'
 
-export default () => {
+export default (props) => {
 
   return (
-    <div className="chatlistitem">
-      <img className="chatlistitem--avatar" src="https://www.w3schools.com/howto/img_avatar2.png" alt="" />
+    <div className={`chatlistitem ${props.active? 'active':''}`}
+      onClick={props.onClick}
+    >
+
+      <img className="chatlistitem--avatar" src={props.data.image} alt="" />
       <div className="chatlistitem--lines">
         <div className="chatlistitem--line">
-          <div className="chatListItem--name">Alisson Rangel</div>
+          <div className="chatListItem--name">{props.data.title}</div>
           <div className="chatListItem--date">19:00</div>
         </div>  
         <div className="chatlistitem--line">
