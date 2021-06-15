@@ -1,9 +1,13 @@
 import React, {useState, useEffect} from 'react';
+import './App.css';
+
 import ChatListItem from './components/ChatListItem';
 import ChatIntro from './components/ChatIntro';
 import ChatWindow from './components/ChatWindow';
+import NewChat from './components/NewChat';
+
 import logo from './logo.svg';
-import './App.css';
+
 
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -19,16 +23,32 @@ function App() {
     {chatId: 4, title: 'Fulano de tal', image:'https://www.w3schools.com/howto/img_avatar2.png'}
   ]);
   const [activeChat, setActiveChat] = useState({});
+
+  const [user, setUser] = useState({
+    id: 1234,
+    name: 'Alisson Rangel',
+    avatar: 'https://avatars.githubusercontent.com/u/8989215?s=60&v=4'
+  })
+
+  const [showNewChat, setShowNewChat] = useState(false);
+
   return (
     <div className="app-window">
       <div className="sidebar">
+        
+        <NewChat 
+          chatlist={chatList}
+          show={showNewChat} 
+          setShow={setShowNewChat} 
+          user={user} 
+        />
         <header>
-          <img className="header--avatar" src="https://www.w3schools.com/howto/img_avatar2.png" alt="" />
+          <img className="header--avatar" src={user.avatar} alt="" />
           <div className="header--buttons">
             <div className="header--btn">
               <DonutLargeIcon style={{color: '#919191'}} />
             </div>
-            <div className="header--btn">
+            <div onClick={()=>setShowNewChat(true)} className="header--btn">
               <ChatIcon style={{color: '#919191'}} />
             </div>
             <div className="header--btn">
@@ -57,7 +77,10 @@ function App() {
       </div>
       <div className="contentarea">
         { activeChat.chatId !== undefined && 
-          <ChatWindow activeChat={activeChat} />
+          <ChatWindow 
+            activeChat={activeChat} 
+            user={user}
+          />
         }
         { activeChat.chatId === undefined && 
           <ChatIntro />
