@@ -4,6 +4,19 @@ import './ChatListItem.css'
 
 export default (props) => {
 
+  const [time, setTime] = useState('');
+
+  useEffect(()=>{
+    if( props.data.lastMessageDate > 0 ){
+      let d = new Date(props.data.lastMessageDate.seconds * 1000);
+      let hours = d.getHours();
+      let minutes = d.getMinutes();
+      hours = hours < 10 ? '0'+hours : hours;
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      setTime(`${hours}:${minutes}`);
+    }
+  },[props.data])
+  
   return (
     <div className={`chatlistitem ${props.active? 'active':''}`}
       onClick={props.onClick}
@@ -13,11 +26,11 @@ export default (props) => {
       <div className="chatlistitem--lines">
         <div className="chatlistitem--line">
           <div className="chatListItem--name">{props.data.title}</div>
-          <div className="chatListItem--date">19:00</div>
+          <div className="chatListItem--date">{time}</div>
         </div>  
         <div className="chatlistitem--line">
           <div className="chatListItem--lastMsg">
-            <p>I can see filename here. But files lives in different folders and it doesn't seems for me like a convenient way to get and link to the file.</p>
+            <p>{props.data.lastMessage}</p>
           </div>
         </div>  
       </div>

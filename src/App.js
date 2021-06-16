@@ -5,32 +5,52 @@ import ChatListItem from './components/ChatListItem';
 import ChatIntro from './components/ChatIntro';
 import ChatWindow from './components/ChatWindow';
 import NewChat from './components/NewChat';
-
-import logo from './logo.svg';
-
+import Login from './components/Login';
 
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import SearchIcon from '@material-ui/icons/Search';
 
+import Api from './Api';
+
 function App() {
 
-  const [chatList, setChatList] = useState([
-    {chatId: 1, title: 'Fulano de tal', image:'https://www.w3schools.com/howto/img_avatar2.png'},
-    {chatId: 2, title: 'Fulano de tal', image:'https://www.w3schools.com/howto/img_avatar2.png'},
-    {chatId: 3, title: 'Fulano de tal', image:'https://www.w3schools.com/howto/img_avatar2.png'},
-    {chatId: 4, title: 'Fulano de tal', image:'https://www.w3schools.com/howto/img_avatar2.png'}
-  ]);
+  const [chatList, setChatList] = useState([]);
+  
   const [activeChat, setActiveChat] = useState({});
 
-  const [user, setUser] = useState({
-    id: 1234,
-    name: 'Alisson Rangel',
-    avatar: 'https://avatars.githubusercontent.com/u/8989215?s=60&v=4'
-  })
+  const [user, setUser] = useState(null);
 
   const [showNewChat, setShowNewChat] = useState(false);
+
+  useEffect(()=>{
+    if ( user != null){
+      let unsub = Api.onChatList(user.id, setChatList);
+      return unsub;
+    }
+  },[user]);
+
+  const handleLoginData = async (u) => {
+    let newUser = {
+      id: u.uid,
+      name: u.displayName,
+      avatar: u.photoURL
+    };
+    console.log(u.displayName);
+    console.log(u.photoURL);
+    console.log(u.uid);
+    
+    await Api.addUser(newUser);
+    
+    setUser( newUser );
+  }
+
+  if ( user === null ){
+    return (
+      <Login onReceive={handleLoginData} />
+    )
+  }
 
   return (
     <div className="app-window">
@@ -78,7 +98,7 @@ function App() {
       <div className="contentarea">
         { activeChat.chatId !== undefined && 
           <ChatWindow 
-            activeChat={activeChat} 
+            data={activeChat} 
             user={user}
           />
         }

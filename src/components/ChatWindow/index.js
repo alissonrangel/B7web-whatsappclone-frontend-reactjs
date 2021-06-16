@@ -13,6 +13,8 @@ import './ChatWindow.css'
 
 import MessageItem from '../MessageItem';
 
+import Api from '../../Api';
+
 export default (props) => {
 
   const body = useRef();
@@ -28,26 +30,14 @@ export default (props) => {
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [text, setText] = useState('');
   const [listening, setListening] = useState(false);
-  const [list, setList] = useState([
-    { author:123, body: 'bla bla' },
-    { author:123, body: 'Olê olá, oioioba' },
-    { author:1234, body: 'Whats up'},
-    { author:123, body: 'bla bla' },
-    { author:123, body: 'Olê olá, oioioba' },
-    { author:1234, body: 'Whats up'},
-    { author:123, body: 'bla bla' },
-    { author:123, body: 'Olê olá, oioioba' },
-    { author:1234, body: 'Whats up'},
-    { author:123, body: 'bla bla' },
-    { author:123, body: 'Olê olá, oioioba' },
-    { author:1234, body: 'Whats up'},
-    { author:123, body: 'bla bla' },
-    { author:123, body: 'Olê olá, oioioba' },
-    { author:1234, body: 'Whats up'},
-    { author:123, body: 'bla bla' },
-    { author:123, body: 'Olê olá, oioioba' },
-    { author:1234, body: 'Whats up'}
-  ]);
+  const [list, setList] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(()=>{
+    setList([]);
+    let unsub = Api.onChatContent(props.data.chatId, setList, setUsers);
+    return unsub;
+  },[props.data.chatId]);
 
   useEffect(()=>{
     if ( body.current.scrollHeight > body.current.offsetHeight){
@@ -65,8 +55,19 @@ export default (props) => {
     setEmojiOpen(false);
   }
 
-  const handleSendClick = ()=>{
+  const handleInputKeyUp = (e) => {
 
+    if ( e.keyCode == 13){
+      handleSendClick();
+    }
+  }
+
+  const handleSendClick = ()=>{
+    if ( text !== ''){
+      Api.sendMessage(props.data, props.user.id, 'text', text, users);
+      setText('');
+      setEmojiOpen(false);
+    }
   }
 
   const handleMicClick = ()=>{
@@ -88,9 +89,9 @@ export default (props) => {
     <div className="chatWindow">
       <div className="chatWindow--header">
         <div className="chatWindow--headerinfo">
-          <img className="chatWindow--avatar" src={props.user.avatar} />
+          <img className="chatWindow--avatar" src={props.data.image} />
           <div className="chatWindow--name">
-            {props.user.name}
+            {props.data.title}
           </div>
         </div>
         <div className="chatWindow--headerbuttons">
@@ -141,6 +142,7 @@ export default (props) => {
             placeholder="Digite uma mensagem"
             value={text}
             onChange={(e)=>setText(e.target.value)}
+            onKeyUp={handleInputKeyUp}
           />
         </div>
         <div className="chatWindow--pos">
